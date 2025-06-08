@@ -10,10 +10,7 @@ on:
         description: 'Tipo de artefacto a generar (jar o war)'
         required: true
         default: 'jar'
-        type: choice
-        options:
-          - jar
-          - war
+        type: string
   push:
     branches: [ main ]
   pull_request:
@@ -36,7 +33,9 @@ jobs:
 
       - name: Build with Maven (JAR o WAR)
         run: |
-          ./mvnw --batch-mode clean package -P${{ github.event.inputs.build_type || 'jar' }}
+          BUILD_TYPE=${{ github.event.inputs.build_type }}
+          if [ -z "$BUILD_TYPE" ]; then BUILD_TYPE=jar; fi
+          ./mvnw --batch-mode clean package -P$BUILD_TYPE
 
   test:
     name: Test
