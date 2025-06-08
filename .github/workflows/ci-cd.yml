@@ -84,3 +84,4 @@ jobs:
           filename: pom.xml
       - name: Echo version
         run: echo "Deploying app version: ${{ steps.get_version.outputs.version }}"
+        
