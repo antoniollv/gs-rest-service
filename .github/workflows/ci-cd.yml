@@ -32,8 +32,8 @@ jobs:
 
       - name: Build with Maven (JAR o WAR)
         run: |
-          BUILD_TYPE=${{ github.event.inputs.build_type }}
-          if [ -z "$BUILD_TYPE" ]; then BUILD_TYPE=jar; fi
+          BUILD_TYPE="${{ github.event.inputs.build_type }}"
+          if [ -z "$BUILD_TYPE" ] || [ "$BUILD_TYPE" == "null" ]; then BUILD_TYPE=jar; fi
           ./mvnw --batch-mode clean package -P$BUILD_TYPE
 
   test:
