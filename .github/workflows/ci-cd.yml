@@ -68,7 +68,8 @@ jobs:
         with:
           filename: pom.xml
       - name: Echo version
-        run: echo "App version: ${{ steps.get_version.outputs.version }}"
+        run: |
+          echo "App version: ${{ steps.get_version.outputs.version }}"
 
   deploy:
     name: Deploy (echo version)
@@ -83,5 +84,6 @@ jobs:
         with:
           filename: pom.xml
       - name: Echo version
-        run: echo "Deploying app version: ${{ steps.get_version.outputs.version }}"
-        
+        run: |
+          echo "Deploying app version: ${{ steps.get_version.outputs.version }}"
+
