@@ -10,7 +10,6 @@ on:
         description: 'Tipo de artefacto a generar (jar o war)'
         required: true
         default: 'jar'
-        type: string
   push:
     branches: [ main ]
   pull_request:
