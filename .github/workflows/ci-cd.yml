@@ -62,14 +62,14 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
-      - name: Extract version from pom.xml
-        id: get_version
+      - name: Extract info from pom.xml
+        id: get_info
+        uses: ./.github/actions/extract-maven-info
+      - name: Echo app info
         run: |
-          VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-      - name: Echo version
-        run: |
-          echo "App version: ${{ steps.get_version.outputs.version }}"
+          echo "App name: ${{ steps.get_info.outputs.name }}"
+          echo "App version: ${{ steps.get_info.outputs.version }}"
+          echo "App artifact: ${{ steps.get_info.outputs.artifact }}"
 
   deploy:
     name: Deploy (echo version)
@@ -78,12 +78,12 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
-      - name: Extract version from pom.xml
-        id: get_version
+      - name: Extract info from pom.xml
+        id: get_info
+        uses: ./.github/actions/extract-maven-info
+      - name: Echo app info
         run: |
-          VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-      - name: Echo version
-        run: |
-          echo "Deploying app version: ${{ steps.get_version.outputs.version }}"
+          echo "Deploying app name: ${{ steps.get_info.outputs.name }}"
+          echo "Deploying app version: ${{ steps.get_info.outputs.version }}"
+          echo "Deploying app artifact: ${{ steps.get_info.outputs.artifact }}"
 
