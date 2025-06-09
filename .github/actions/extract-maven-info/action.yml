@@ -1,5 +1,5 @@
 name: 'Extract Maven Info'
-description: 'Composite action to extract app name, version, and artifact from pom.xml using Maven.'
+description: 'Composite action to extract app name, version, and artifact (with extension) from pom.xml using Maven.'
 inputs:
   maven-wrapper:
     description: 'Path to mvnw (default: ./mvnw)'
@@ -13,7 +13,7 @@ outputs:
     description: 'App version from pom.xml'
     value: ${{ steps.extract.outputs.version }}
   artifact:
-    description: 'App artifact from pom.xml or constructed'
+    description: 'App artifact from pom.xml or constructed, with extension'
     value: ${{ steps.extract.outputs.artifact }}
 runs:
   using: 'composite'
@@ -28,6 +28,11 @@ runs:
         if [ -z "$APP_ARTIFACT" ] || [ "$APP_ARTIFACT" == "null" ]; then
           APP_ARTIFACT=$($MVNW help:evaluate -Dexpression=project.artifactId -q -DforceStdout)-$APP_VERSION
         fi
+        PACKAGING=$($MVNW help:evaluate -Dexpression=project.packaging -q -DforceStdout)
+        if [ -z "$PACKAGING" ] || [ "$PACKAGING" == "null" ]; then
+          PACKAGING=jar
+        fi
+        ARTIFACT_FULL="$APP_ARTIFACT.$PACKAGING"
         echo "name=$APP_NAME" >> $GITHUB_OUTPUT
         echo "version=$APP_VERSION" >> $GITHUB_OUTPUT
-        echo "artifact=$APP_ARTIFACT" >> $GITHUB_OUTPUT
+        echo "artifact=$ARTIFACT_FULL" >> $GITHUB_OUTPUT
