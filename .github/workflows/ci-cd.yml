@@ -70,6 +70,14 @@ jobs:
           echo "App name: ${{ steps.get_info.outputs.name }}"
           echo "App version: ${{ steps.get_info.outputs.version }}"
           echo "App artifact: ${{ steps.get_info.outputs.artifact }}"
+      - name: Remove -SNAPSHOT from version (main only)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          if [[ "$VERSION" == *-SNAPSHOT ]]; then
+            NEW_VERSION="${VERSION/-SNAPSHOT/}"
+            ./mvnw versions:set -DnewVersion=$NEW_VERSION -DgenerateBackupPoms=false
+            echo "Updated version to $NEW_VERSION for release"
 
   deploy:
     name: Deploy (echo version)
@@ -86,4 +94,10 @@ jobs:
           echo "Deploying app name: ${{ steps.get_info.outputs.name }}"
           echo "Deploying app version: ${{ steps.get_info.outputs.version }}"
           echo "Deploying app artifact: ${{ steps.get_info.outputs.artifact }}"
+      - name: Publish to Maven feed
+        run: |
+          echo '<settings><servers><server><id>repo</id><username>${{ secrets.MAVEN_REPO_USER }}</username><password>${{ secrets.MAVEN_REPO_PASS }}</password></server></servers></settings>' > $HOME/.m2/settings.xml
+          ./mvnw deploy -P${{ github.ref == 'refs/heads/main' && 'pro' || 'dev' }} --settings $HOME/.m2/settings.xml
+        env:
+          MAVEN_REPO_URL: ${{ secrets.MAVEN_REPO_URL }}
 

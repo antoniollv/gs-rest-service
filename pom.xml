@@ -71,6 +71,33 @@
 				<packaging.type>jar</packaging.type>
 			</properties>
 		</profile>
+		<profile>
+			<id>dev</id>
+			<distributionManagement>
+				<repository>
+					<id>repo</id>
+					<url>${env.MAVEN_REPO_URL}</url>
+				</repository>
+				<snapshotRepository>
+					<id>repo</id>
+					<url>${env.MAVEN_REPO_URL}</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>pro</id>
+			<activation>
+				<property>
+					<name>!env.SNAPSHOT</name>
+				</property>
+			</activation>
+			<distributionManagement>
+				<repository>
+					<id>repo</id>
+					<url>${env.MAVEN_REPO_URL}</url>
+				</repository>
+			</distributionManagement>
+		</profile>
 	</profiles>
 
 </project>
